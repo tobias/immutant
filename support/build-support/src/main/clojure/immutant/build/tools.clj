@@ -31,8 +31,11 @@
 (defn unzip [zip-file dest-dir]
   (let [result (shell/sh "unzip" "-q" "-d" (str dest-dir) zip-file)]
     (if (not= (:exit result) 0)
-      (println "ERROR: unzip failed:" (:err result)))
-    (:out result)))
+      (do
+        (println "ERROR: unzip failed:" (:err result))
+        (println "Trying jar...")
+        (:out (shell/sh "jar" "xvf" zip-file :dir dest-dir)))
+      (:out result))))
 
 (defn with-message [message & body]
   (print (str message "... "))
