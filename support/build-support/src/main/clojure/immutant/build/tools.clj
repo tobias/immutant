@@ -38,8 +38,9 @@
   (try
     (unzip* "unzip" "-q" "-d" (str dest-dir) zip-file)
     (catch java.io.IOException e
-       (println "'unzip' not found, trying 'jar'...")
-       (unzip* "jar" "xvf" zip-file :dir dest-dir))))
+      (println "'unzip' not found, trying 'jar'...")
+      (unzip* "jar" "xvf" zip-file :dir (doto (io/file dest-dir)
+                                          (.mkdir))))))
 
 (defn with-message [message & body]
   (print (str message "... "))
