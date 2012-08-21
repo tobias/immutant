@@ -28,14 +28,18 @@
             [org.satta.glob                 :as glob])
   (:use [clojure.pprint :only [pprint]]))
 
-(defn unzip [zip-file dest-dir]
-  (let [result (shell/sh "unzip" "-q" "-d" (str dest-dir) zip-file)]
+(defn unzip* [& sh-args]
+  (let [result (apply shell/sh sh-args)]
     (if (not= (:exit result) 0)
-      (do
-        (println "ERROR: unzip failed:" (:err result))
-        (println "Trying jar...")
-        (:out (shell/sh "jar" "xvf" zip-file :dir dest-dir)))
-      (:out result))))
+      (println "ERROR: zip extraction failed:" (:err result)))
+    (:out result)))
+
+(defn unzip [zip-file dest-dir]
+  (try
+    (unzip* "unzip" "-q" "-d" (str dest-dir) zip-file)
+    (catch java.io.IOException e
+       (println "'unzip' not found, trying 'jar'...")
+       (unzip* "jar" "xvf" zip-file :dir dest-dir))))
 
 (defn with-message [message & body]
   (print (str message "... "))
