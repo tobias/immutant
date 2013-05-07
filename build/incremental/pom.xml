@@ -29,8 +29,8 @@
       <id>publish-from-primary-build</id>
       <activation>
         <property>
-          <name>clojure.compat.version</name>
-          <value>${version.clojure}</value>
+          <name>clojure_compat_version</name>
+          <value>1.5.1</value>
         </property>
       </activation>
       <build>
